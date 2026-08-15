@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 東北楓葉 — 行程時間軸與缺口盤點</title>
+<style>
+:root{--accent:#d97706;--ok:#15803d;--warn:#b45309;--bad:#b91c1c;--info:#1d4ed8;--bg:#faf7f2;--card:#fff;--line:#e7e0d5;--txt:#1c1917;--muted:#78716c}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang TC","Noto Sans TC",sans-serif;background:var(--bg);color:var(--txt);line-height:1.7;font-size:15px}
+.layout{display:flex}
+nav{width:250px;flex:0 0 250px;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--card);border-right:1px solid var(--line);padding:20px 14px}
+nav h2{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+nav a{display:block;color:var(--txt);text-decoration:none;font-size:13.5px;padding:5px 8px;border-radius:6px;margin:1px 0}
+nav a:hover{background:#f5efe6;color:var(--accent)}
+nav a.sub{padding-left:20px;color:var(--muted);font-size:12.5px}
+main{flex:1;min-width:0;padding:36px 42px 80px;max-width:1020px}
+header h1{font-size:26px;margin-bottom:6px}
+.meta{color:var(--muted);font-size:13px;margin-bottom:22px}
+section{margin:34px 0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 26px}
+section h2{font-size:19px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+section h3{font-size:15.5px;margin:18px 0 8px;color:#44403c}
+.tag{font-size:11px;padding:2px 9px;border-radius:99px;font-weight:600;letter-spacing:.03em}
+.tag.ok{background:#dcfce7;color:var(--ok)}.tag.warn{background:#fef3c7;color:var(--warn)}.tag.bad{background:#fee2e2;color:var(--bad)}.tag.info{background:#dbeafe;color:var(--info)}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f5efe6;font-weight:600;white-space:nowrap}
+.status{font-size:12px;font-weight:600;white-space:nowrap}
+.status.pending{color:var(--bad)}.status.done{color:var(--ok)}.status.part{color:var(--warn)}
+.prio{font-weight:700}
+.prio.p1{color:var(--bad)}.prio.p2{color:var(--warn)}.prio.p3{color:var(--muted)}
+ul,ol{margin:8px 0 8px 22px}
+li{margin:3px 0}
+.toplink{display:inline-block;margin-top:12px;font-size:12.5px;color:var(--muted);text-decoration:none}
+.toplink:hover{color:var(--accent)}
+#totop{position:fixed;right:22px;bottom:22px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:20px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);z-index:99}
+.callout{border-left:4px solid var(--accent);background:#fdf6ec;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13.5px}
+a{color:var(--info);text-decoration:none}
+a:hover{text-decoration:underline}
+/* timeline */
+.day{background:#fffdf8;border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:14px 0}
+.day h3{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px;font-size:16px}
+.day .ddate{color:var(--muted);font-weight:400;font-size:13.5px}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{display:flex;gap:12px;padding:6px 0;border-bottom:1px dashed #f0e9dd;font-size:14px}
+.tl li:last-child{border-bottom:none}
+.tl .time{flex:0 0 86px;font-weight:700;color:#57534e;font-size:13px;padding-top:1px}
+.tl .ev{flex:1}
+.tl .ev .note{color:var(--muted);font-size:12.5px}
+.warn-mark{color:var(--bad);font-weight:600}
+.ok-mark{color:var(--ok);font-weight:600}
+.tl li.no-run{color:#a8a29e;background:#f5f5f4;border-radius:6px;margin:2px 0;padding:4px 8px;text-decoration:line-through}
+.tl li.no-run .time{color:#a8a29e}
+.tl li.no-run a{color:#a8a29e;pointer-events:none}
+.tl li.uncertain{background:#fef3c7;border-radius:6px;margin:2px 0;padding:4px 8px}
+.hotel-line{background:#fdf6ec;border-radius:8px;padding:4px 10px;margin:4px 0;display:inline-block;font-size:13px}
+@media(max-width:900px){.layout{flex-direction:column}nav{position:static;width:100%;height:auto;border-right:none;border-bottom:1px solid var(--line)}nav a{display:inline-block;margin:2px}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav>
+<h2>目錄 TOC</h2>
+<a href="#timeline">1. 行程時間軸</a>
+<a href="#overview">2. 概覽</a>
+<a href="#transport" class="sub">4. 交通缺口</a>
+<a href="#lodging" class="sub">4. 住宿缺口</a>
+<a href="#itinerary" class="sub">5. 行程細節缺口</a>
+<a href="#priority">6. 建議優先序</a>
+<a href="#sources">7. 資料來源</a>
+</nav>
+<main>
+<header id="top">
+<h1>🍁 2026 東北楓葉 — 行程時間軸與缺口盤點</h1>
+<div class="meta">更新：2026-08-15 ｜ 行程：2026-10-31 ~ 11-08（9 天 8 晚）｜ 2 人同行</div>
+</header>
+
+<section id="timeline">
+<h2><span class="tag ok">時間軸</span>1. 行程時間軸 <a class="toplink" href="#top">↑ 回到頂部</a></h2>
+<p>圖例：<span class="ok-mark">✅</span> 已確認（官方驗證）｜<span class="warn-mark">⚠️</span> 未定 / 待確認 ｜ <span class="warn-mark">❌</span> 當日不運行。</p>
+<p><strong>🚨 不確定交通一覽</strong>：はやぶさ61（13:44）・はやぶさ81（14:28）❌ 10/31 不運行 → 已改用 はやぶさ27（14:20，每日）；はやぶさ306（12:04）❌ 11/3 不運行 → 已改用 はやぶさ20（12:39，每日）；紅葉号 ⚠️ 2026 未公佈（2025 實績 400円/趟）。9 月新版ダイヤ（2610）上線後複核。</p>
+
+<div class="day">
+<h3>D1 · 10/31（六）移動日 <span class="ddate">✈️ 桃園 → 成田 → 青森</span></h3>
+<ul class="tl">
+<li><span class="time">05:00-06:10</span><span class="ev">桃園機場 TPE（虎航起飛 06:10）<span class="warn-mark">⚠️ 確認號碼未補</span></span></li>
+<li><span class="time">10:35-11:48</span><span class="ev">成田機場 T2 抵達 → 入境 → <strong>B1F JR East 服務中心兌換 JR Pass + 劃位</strong>（N'EX 全車指定席、はやぶさ27）<a href="https://www.jreast.co.jp/zh-CHT/multi/pass/purchase.html">Pass 資訊</a></span></li>
+<li><span class="time">11:48-12:44</span><span class="ev"><strong>N'EX 空港第2ビル→東京（JR Pass 第一天啟用）</strong> <a href="https://timetables.jreast.co.jp/2608/timetable-v/023u2.html">時刻表</a> <span class="note">fallback：12:23→13:15</span></span></li>
+<li><span class="time">12:44-14:20</span><span class="ev">東京站午餐</span></li>
+<li class="no-run"><span class="time">13:44-16:54</span><span class="ev">はやぶさ61 ❌ 10/31 不運行（季節列車，僅 7/24-9/25 特定日）</span></li>
+<li><span class="time">14:20-17:32</span><span class="ev"><strong>新幹線 はやぶさ27 東京→新青森（每日）✅ 主選</strong> <a href="https://timetables.jreast.co.jp/2608/timetable-v/003d2.html">時刻表</a> <span class="note">備選（皆每日）：13:20 はやぶさ25→16:45、14:44 はやぶさ29→17:54、15:20 はやぶさ31→18:41</span></span></li>
+<li class="no-run"><span class="time">14:28-17:41</span><span class="ev">はやぶさ81 ❌ 10/31 不運行（季節列車，僅 8/7・10-14、9/18-19）</span></li>
+<li><span class="time">16:54-17:10</span><span class="ev">青森⇄新青森 在來線 <a href="https://timetables.jreast.co.jp/2608/timetable-v/258d2.html">時刻表</a></span></li>
+<li><span class="time">17:30</span><span class="ev"><span class="hotel-line">🏨 HOTEL MYSTAYS Aomori Station — 24,918 JPY <a href="https://www.mystays.com/">官網</a> <span class="warn-mark">⚠️ reservation pending、確認號碼未補</span></span></span></li>
+<li><span class="time">晚餐</span><span class="ev">青森駅周邊（海鮮/帆立）<span class="warn-mark">⚠️ 餐廳未安排</span></span></li>
+</ul>
+</div>
+
+<div class="day">
+<h3>D2 · 11/01（日）山上 <span class="ddate">🏔️ 青森 → 奥入瀬</span></h3>
+<ul class="tl">
+<li><span class="time">09:00-11:01</span><span class="ev">みずうみ号 4号 青森駅→奥入瀬渓流館（每日運行）<a href="https://www.jrbustohoku.co.jp/print/route/11/274/">巴士時刻表</a></span></li>
+<li><span class="time">11:01-15:00</span><span class="ev">奥入瀬渓流入口周邊漫步 + 午餐 <span class="warn-mark">⚠️ 午餐未安排</span></span></li>
+<li><span class="time">15:00</span><span class="ev"><span class="hotel-line">🏨 奧入瀨屋 check-in — 24,536 JPY <a href="https://www.oirase-keiryuu.jp/">星野リゾート奥入瀬渓流ホテル官網</a> <span class="warn-mark">⚠️ 正名待確認（是否同一間）</span></span></span></li>
+</ul>
+</div>
+
+<div class="day">
+<h3>D3 · 11/02（一）山上 <span class="ddate">🍁 奧入瀨溪流</span></h3>
+<ul class="tl">
+<li><span class="time">09:00-14:00</span><span class="ev">奧入瀨溪流步道（焼山 → 子ノ口）</span></li>
+<li><span class="time">14:00-15:00</span><span class="ev">返回酒店</span></li>
+<li><span class="time">下午-傍晚</span><span class="ev">十和田湖周邊（休屋/遊覽船）<span class="warn-mark">⚠️ 細節未定</span></span></li>
+</ul>
+</div>
+
+<div class="day">
+<h3>D4 · 11/03（二·文化の日）移動日/買蘋果製品 <span class="ddate">🚄 十和田湖 → 青森 → 盛岡</span></h3>
+<ul class="tl">
+<li><span class="time">09:00-11:44</span><span class="ev">みずうみ号 1号 十和田湖→青森駅 <a href="https://www.jrbustohoku.co.jp/print/route/11/274/">巴士時刻表</a></span></li>
+<li><span class="time">11:44-12:19</span><span class="ev">青森→新青森 在來線 12:14発（654M）<a href="https://timetables.jreast.co.jp/2608/timetable-v/258u2.html">時刻表</a> <span class="note">⚠️ 中午班距 40-50 分</span></span></li>
+<li class="no-run"><span class="time">12:04-12:59</span><span class="ev">はやぶさ306 ❌ 11/3 不運行（臨時列車，僅 8/15-16、9/22-23）</span></li>
+<li><span class="time">12:39-13:50</span><span class="ev"><strong>新幹線 はやぶさ20 新青森→盛岡（每日）✅ 主選</strong> <a href="https://timetables.jreast.co.jp/2608/timetable-v/003u2.html">時刻表</a> <span class="note">備選：13:16 はやぶさ22→14:17（每日）</span></span></li>
+<li><span class="time">13:50-14:30</span><span class="ev"><span class="hotel-line">🏨 グリッズプレミアムホテル盛岡 check-in — 13,745 JPY <a href="https://gridshotel.com/morioka/">官網</a>（2026/5/1 開幕，駅北口徒步 3 分）<span class="warn-mark">⚠️ pending</span></span></span></li>
+<li><span class="time">14:30-15:30</span><span class="ev">盛岡城跡公園（紅葉，免費）</span></li>
+<li><span class="time">16:00-16:30</span><span class="ev">高松公園（紅葉，免費）<span class="note">11 月日落 ~16:40</span></span></li>
+<li><span class="time">晚餐</span><span class="ev">盛岡冷麵/じゃじゃ麺 <span class="warn-mark">⚠️ 餐廳未安排</span></span></li>
+</ul>
+</div>
+
+<div class="day">
+<h3>D5 · 11/04（三）<span class="ddate">⛩️ 平泉世界遺產</span></h3>
+<ul class="tl">
+<li><span class="time">10:00-12:00</span><span class="ev">中尊寺（金色堂・讃衡蔵 1,000円）<a href="https://www.chusonji.or.jp/">官網</a> <span class="warn-mark">⚠️ 11/4 起冬季時間 16:30 關</span></span></li>
+<li><span class="time">12:00-13:00</span><span class="ev">平泉午餐 <span class="warn-mark">⚠️ 未安排</span></span></li>
+<li><span class="time">13:00-15:00</span><span class="ev">毛越寺（700円，17:00 關）<a href="https://motsuji.or.jp/">官網</a></span></li>
+<li><span class="time">15:00+</span><span class="ev">返回盛岡（買蘋果製品）</span></li>
+</ul>
+</div>
+
+<div class="day">
+<h3>D6 · 11/05（四）<span class="ddate">🌊 嚴美溪</span></h3>
+<ul class="tl">
+<li><span class="time">10:00-12:00</span><span class="ev">嚴美溪（免費；郭公だんご「空飛ぶ団子」500円，9:30-15:00 賣完即收）<a href="https://www.ichitabi.jp/">一関市観光</a></span></li>
+<li><span class="time">下午</span><span class="ev">一関/平泉周邊或盛岡市內 <span class="warn-mark">⚠️ 未定</span></span></li>
+</ul>
+</div>
+
+<div class="day">
+<h3>D7 · 11/06（五）<span class="ddate">🍁 鳴子峽 → 東京（平日時刻）</span></h3>
+<ul class="tl">
+<li><span class="time">08:02-08:43</span><span class="ev">新幹線 はやぶさ8 盛岡→古川 <a href="https://timetables.jreast.co.jp/2608/timetable-v/003u2.html">時刻表</a></span></li>
+<li><span class="time">08:43-10:06</span><span class="ev">陸羽東線 4725D 古川→鳴子温泉（每日）<a href="https://timetables.jreast.co.jp/2608/timetable-v/268d1.html">時刻表</a></span></li>
+<li class="uncertain"><span class="time">09:30-11:00</span><span class="ev">紅葉号巴士 鳴子温泉→鳴子峽 <span class="warn-mark">⚠️ 2026 未公佈</span>（2025 實績 10/27-11/9 每日、<strong>400円/趟 現金</strong>）<a href="https://www.welcome-naruko.jp/">鳴子温泉観光協会</a> <span class="note">❌ ミヤコーバス營運 — JR Pass 不涵蓋，自費；2026 公佈後確認</span></span></li>
+<li><span class="time">11:00-15:00</span><span class="ev">鳴子峽展望台/大深沢遊歩道（免費）</span></li>
+<li><span class="time">15:40-16:26</span><span class="ev">陸羽東線 1736D 鳴子温泉→古川 <a href="https://timetables.jreast.co.jp/2608/timetable-v/268u1.html">時刻表</a>（紅葉号接駁時刻依 2026 公佈調整）</span></li>
+<li><span class="time">17:10-19:28</span><span class="ev">新幹線 やまびこ64 古川→東京（每日班次）<a href="https://timetables.jreast.co.jp/2608/timetable-v/003u2.html">時刻表</a></span></li>
+<li><span class="time">20:00</span><span class="ev"><span class="hotel-line">🏨 ホテル日本橋サイボー check-in — 17,223.5 JPY <a href="https://www.hotel-saibo.co.jp/">官網</a>（人形町）<span class="warn-mark">⚠️ pending</span></span></span></li>
+</ul>
+</div>
+
+<div class="day">
+<h3>D8 · 11/07（六）<span class="ddate">🛍️ 東京購物</span></h3>
+<ul class="tl">
+<li><span class="time">10:00-18:00</span><span class="ev">東京站據點 → 日本橋/銀座/秋葉原 <span class="warn-mark">⚠️ 區域/店家未定</span></span></li>
+<li><span class="time">晚餐</span><span class="ev"><span class="warn-mark">⚠️ 未安排</span></span></li>
+</ul>
+</div>
+
+<div class="day">
+<h3>D9 · 11/08（日）移動日 <span class="ddate">✈️ 東京 → 成田 → 桃園</span></h3>
+<ul class="tl">
+<li><span class="time">11:00</span><span class="ev">check-out，行李寄放 → 東京最後採買</span></li>
+<li><span class="time">17:03-17:58</span><span class="ev">N'EX 東京→成田（20:25 起飛，2hr 前到機場）<a href="https://timetables.jreast.co.jp/2608/timetable-v/023d2.html">時刻表</a></span></li>
+<li><span class="time">20:25-23:25</span><span class="ev">虎航 NRT→TPE <span class="warn-mark">⚠️ 確認號碼未補</span></span></li>
+<li><span class="time">23:25</span><span class="ev">抵桃園 <span class="warn-mark">⚠️ 機場返家交通未定</span></span></li>
+</ul>
+</div>
+
+<div class="callout">🎫 <strong>JR Pass 涵蓋驗證（2026-08-15 官方）</strong>：xlsx 100,000 JPY = <strong>2 人 × JR EAST PASS 10日票</strong>（官方價 50,000×2，連續 10 天 = 10/31-11/9 全程涵蓋）。✅ N'EX、新幹線、青森⇄新青森、みずうみ号（官方明示）、陸羽東線；❌ 紅葉号（ミヤコーバス，自費 ~500円）、遊覽船、東京メトロ。未定：買票前確認 10日 vs 5日票。<a href="https://www.jreast.co.jp/zh-CHT/multi/pass/eastpass.html">官方頁</a></div>
+</section>
+
+<section id="overview">
+<h2><span class="tag info">總覽</span>2. 概覽 <a class="toplink" href="#top">↑ 回到頂部</a></h2>
+<p>行程主體（日期、住宿、航班、JR Pass、景點）已建立私有 repo 文件（原始 xlsx/PDF 不公開）。本報告盤點<strong>目前仍缺的資訊</strong>：19 項缺口中 <strong>9 項已解決</strong>（官網時刻/門票驗證、景點時段、酒店正名）、<strong>2 項部分解決</strong>、<strong>3 項待處理</strong>。</p>
+<table>
+<tr><th>類別</th><th>缺口數</th><th>狀態</th></tr>
+<tr><td>交通</td><td>5</td><td><span class="status part">3 已解決 / 2 部分</span></td></tr>
+<tr><td>住宿</td><td>3</td><td><span class="status part">1 已解決 / 2 待處理</span></td></tr>
+<tr><td>行程細節</td><td>4</td><td><span class="status part">2 已解決 / 2 待處理</span></td></tr>
+</table>
+</section>
+
+
+<section id="transport">
+<h2><span class="tag warn">交通</span>3. 交通缺口 <a class="toplink" href="#top">↑ 回到頂部</a></h2>
+<table>
+<tr><th>#</th><th>缺口</th><th>細節</th><th>影響</th><th>狀態</th><th>建議動作</th></tr>
+<tr><td>T1</td><td>新幹線著時刻版本差異</td><td>xlsx 13:44→16:54 / 14:20→17:32 / 14:28→17:41 vs PDF 讀出 16:48/16:51</td><td>D1 抵達青森時間不確定</td><td><span class="status done">已解決 ✅</span></td><td><strong>官方確認</strong>：14:20 はやぶさ27（每日）為 D1 主選；13:44 はやぶさ61、14:28 はやぶさ81 為季節列車，10/31 不運行（見時間軸 🚨 一覽）</td></tr>
+<tr><td>T2</td><td>D7 回程新幹線時刻表</td><td>原本以為走新青森回東京；實際路線釐清：盛岡→古川→鳴子峽→古川→東京</td><td>鳴子峽→東京當晚安排未定</td><td><span class="status done">已解決 ✅</span></td><td><strong>2026-08-15 官網查證</strong>：盛岡 08:02→古川 08:43；古川 17:10→東京 19:28（やまびこ64 每日）等 3 班；僅剩陸羽東線接駁時刻待補</td></tr>
+<tr><td>T3</td><td>D4 青森→盛岡具體列車</td><td>巴士 9:00→11:44 到青森後，往盛岡的車次未定</td><td>グリッズ 15:00 check-in 需抓緩衝</td><td><span class="status done">已解決 ✅</span></td><td><strong>官方確認</strong>：在來線 12:14→12:19 + 新幹線 12:39→13:50 はやぶさ20（每日，主選）；12:04 はやぶさ306 為臨時列車 11/3 不運行</td></tr>
+<tr><td>T4</td><td>巴士冬季/假日班次</td><td>みずうみ号 PDF 為 2026/4/1 版；11/3（文化の日）與 11 月冬季班次未確認</td><td>D2/D4 接駁時刻可能調整</td><td><span class="status part">部分解決</span></td><td><strong>2026-08-15 官網驗證：現行版與 PDF 完全一致</strong>（每日運行、運行日無終止日）；冬季調整仍以官網當日為準</td></tr>
+<tr><td>T5</td><td>鳴子峽紅葉號</td><td>2026 年度臨時巴士運行日期未公佈</td><td>D7 鳴子峽行程依賴此巴士</td><td><span class="status part">部分解決</span></td><td><strong>2025 實績 10/27-11/9 每日運行，D7=11/6 在往年運行期內</strong>；2026 公佈後確認 <a href="https://www.welcome-naruko.jp/">welcome-naruko.jp</a></td></tr>
+</table>
+<div class="callout">✅ <strong>交通已全部官方驗證</strong>（2026-08-16，<a href="https://timetables.jreast.co.jp/">timetables.jreast.co.jp</a> + <a href="https://www.jrbustohoku.co.jp/">jrbustohoku.co.jp</a>）：N'EX 去回程、みずうみ号、陸羽東線、東北本線全部確認；不確定班次見時間軸 🚨 一覽。</div>
+</section>
+
+<section id="lodging">
+<h2><span class="tag warn">住宿</span>4. 住宿缺口 <a class="toplink" href="#top">↑ 回到頂部</a></h2>
+<table>
+<tr><th>#</th><th>缺口</th><th>細節</th><th>狀態</th><th>建議動作</th></tr>
+<tr><td>L1</td><td>奧入瀨屋正名</td><td>xlsx 寫「奧入瀨屋」，geocode 對應「<a href="https://www.oirase-keiryuu.jp/">星野リゾート 奥入瀬渓流ホテル</a>」— 是否同一間未確認</td><td><span class="status pending">待確認</span></td><td>確認訂房名稱；若是星野集團，位置在焼山（近奥入瀬渓流館站）</td></tr>
+<tr><td>L2</td><td>兩間酒店座標近似</td><td>グリッズプレミアムホテル盛岡、日本橋賽博酒店 OSM 查無 → 車站近似座標</td><td><span class="status done">已解決 ✅</span></td><td><strong>2026-08-15 更新</strong>：グリッズ = 盛岡駅前北通3-6（2026/5/1 開幕新飯店，駅北口徒步3分）；サイボー = ホテル日本橋サイボー（人形町3-3-16）— 名稱/地址/座標已更新</td></tr>
+<tr><td>L3</td><td>住宿確認號碼</td><td>8 筆 reservation 全為 pending、無 confirmation number</td><td><span class="status pending">待補</span></td><td>訂房完成後補入行程系統（確認碼 + 金額核對）</td></tr>
+</table>
+</section>
+
+<section id="itinerary">
+<h2><span class="tag warn">行程</span>5. 行程細節缺口 <a class="toplink" href="#top">↑ 回到頂部</a></h2>
+<table>
+<tr><th>#</th><th>缺口</th><th>細節</th><th>狀態</th><th>建議動作</th></tr>
+<tr><td>I1</td><td>景點時段安排</td><td>景點已掛日期但無開始/結束時間（assignment_time 未設）</td><td><span class="status done">已解決 ✅</span></td><td><strong>2026-08-15 完成</strong>：12 個 assignment 補上時段（D1 機場 05:00-06:10、溪流 09:00-14:00、中尊寺 10:00-12:00 等，依官網時刻）</td></tr>
+<tr><td>I2</td><td>購物日細節</td><td>D8 僅「東京購物」，以東京站為據點，無具體店家/區域</td><td><span class="status pending">待處理</span></td><td>排日本橋/銀座/秋葉原等區域與目標店家（可先給建議清單）</td></tr>
+<tr><td>I3</td><td>門票/費用資訊</td><td>中尊寺、毛越寺、嚴美溪、鳴子峽等門票與設施開放時間未查</td><td><span class="status done">已解決 ✅</span></td><td><strong>2026-08-15 官網查證</strong>：中尊寺 1,000円（11/4 起冬季 16:30 關）⚠️、毛越寺 700円、嚴美溪免費+郭公だんご 500円、鳴子峽免費 — 已註記於行程景點</td></tr>
+<tr><td>I4</td><td>餐廳安排</td><td>全程無餐廳/美食安排（盛岡冷麵、仙台牛舌、青森蘋果派等）</td><td><span class="status pending">待處理</span></td><td>行程中補充或出遊時隨性</td></tr>
+</table>
+</section>
+
+
+<section id="priority">
+<h2><span class="tag bad">優先序</span>6. 建議優先序 <a class="toplink" href="#top">↑ 回到頂部</a></h2>
+<table>
+<tr><th>優先</th><th>項目</th><th>理由</th></tr>
+<tr><td class="prio p1">P1</td><td>住宿/航班確認號碼、JR Pass 購買</td><td>金流與訂位是行程成立的前提</td></tr>
+<tr><td class="prio p1">P1</td><td>L1 奧入瀨屋正名</td><td>需要本人確認</td></tr>
+<tr><td class="prio p2">P2</td><td>T4 冬季班次、T5 紅葉号 2026、9 月新版ダイヤ（2610）複核</td><td>出發前 1-2 週查證即可，不影響現在</td></tr>
+<tr><td class="prio p2">P2</td><td>I1 景點時段、I2 購物日、I3 門票</td><td>10 月前完成，行程會更順</td></tr>
+<tr><td class="prio p3">P3</td><td>L2 座標微調、T5 紅葉號、I4 餐廳</td><td>低風險，隨時可做</td></tr>
+</table>
+</section>
+
+<section id="sources">
+<h2><span class="tag info">附錄</span>7. 資料來源 <a class="toplink" href="#top">↑ 回到頂部</a></h2>
+<ul>
+<li>官網：<a href="https://timetables.jreast.co.jp/">JR東日本時刻表</a> ｜ <a href="https://www.jrbustohoku.co.jp/print/route/11/274/">JR巴士東北（みずうみ号）</a> ｜ <a href="https://www.chusonji.or.jp/">中尊寺</a> ｜ <a href="https://motsuji.or.jp/">毛越寺</a> ｜ <a href="https://www.welcome-naruko.jp/">鳴子温泉観光協会</a></li>
+</ul>
+<div class="callout">更新紀錄：2026-08-15 建立本報告；2026-08-16 交通官網驗證 + 季節列車標記 + 門票/時段/酒店正名完成；時間軸區塊新增。</div>
+</section>
+
+</main>
+</div>
+<button id="totop" title="回到頂部">↑</button>
+<script>
+const t=document.getElementById('totop');
+t.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+window.addEventListener('scroll',()=>{t.style.display=window.scrollY>600?'block':'none'});
+</script>
+</body>
+</html>
